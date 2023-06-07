@@ -7,9 +7,9 @@ const routes = require('./routes/index.js');
 require('./db.js');
 
 const server = express();
-
 server.name = 'API';
 
+// Middle wares
 server.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 server.use(bodyParser.json({ limit: '50mb' }));
 server.use(cookieParser());
@@ -22,9 +22,11 @@ server.use((req, res, next) => {
   next();
 });
 
+
+// Routes
 server.use('/', routes);
 
-// Error catching endware.
+// Error catching end ware.
 server.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   const status = err.status || 500;
   const message = err.message || err;
@@ -32,4 +34,6 @@ server.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   res.status(status).send(message);
 });
 
+
+// Export server
 module.exports = server;
