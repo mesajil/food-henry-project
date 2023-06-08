@@ -6,16 +6,22 @@ const path = require('path');
 
 // Connection to the database
 const {
-  DB_USER, DB_PASSWORD, DB_HOST, DB_NAME,
+  DB_USER, DB_PASSWORD, DB_HOST, PORT, DB_NAME,
 } = process.env;
 
 const sequelize = new Sequelize(
-  `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`,
+  DB_NAME,
+  DB_USER,
+  DB_PASSWORD,
   {
-    logging: false, // set to console.log to see the raw SQL queries
+    host: DB_HOST,
+    port: PORT,
+    dialect: 'postgres',
+    logging: false,
     native: false, // lets Sequelize know we can use pg-native for ~30% more speed
   }
 );
+
 
 
 // Read models from models file

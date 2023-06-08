@@ -23,7 +23,7 @@ server.use((req, res, next) => {
 });
 
 
-// Routes
+// Main routes
 server.use('/', routes);
 
 // Error catching end ware.

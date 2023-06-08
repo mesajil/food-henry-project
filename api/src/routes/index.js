@@ -1,18 +1,26 @@
 const { Router } = require('express');
 const recipeController = require('../controllers/recipe.controller')
-const testController = require('../controllers/test.controller')
+const dietController = require('../controllers/diet.controller')
+const apiController = require('../controllers/api.controller')
 
 const router = Router();
 
-// Setup recipe routes
-router.get('/recipes/:id', recipeController.getRecipeById)
+// Configure recipe routes
+router.post('/recipes/', recipeController.createRecipe)
+router.get('/recipes/', recipeController.getRecipesByNameMatch)
+router.get('/recipes/:idRecipe', recipeController.getRecipeById)
+router.get('/api/recipe', apiController.getRecipes)
+router.get('/api/recipe/:id', apiController.getRecipeInformationById)
 
-// Setup diet routes
+// Configure diet routes
+router.get('/diets/', dietController.getDiets)
+router.get('/api/diets/', dietController.getDietNamesFromAPI)
+router.get('/db/diets/', dietController.getDietsFromDB)
 
-
-// Setup test routes
-router.get('/test/hello', testController.getHelloMessage)
-router.get('/test/recipe/:id', testController.getRecipeInformationById)
+// Configure test routes
+router.get('/hello', (req, res) => {
+    res.status(200).send('Hello World!')
+})
 
 // Handle requests to unknown routes
 router.all('*', (req, res) => {
