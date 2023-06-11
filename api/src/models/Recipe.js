@@ -5,10 +5,9 @@ module.exports = (sequelize) => {
     'recipe',
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
+        defaultValue: DataTypes.UUIDV4,
       },
       name: {
         type: DataTypes.STRING,
@@ -31,6 +30,7 @@ module.exports = (sequelize) => {
       summary: {
         type: DataTypes.STRING,
         allowNull: false,
+        defaultValue: "",
       },
       healthScore: {
         type: DataTypes.INTEGER,
@@ -44,26 +44,12 @@ module.exports = (sequelize) => {
       steps: {
         type: DataTypes.ARRAY(DataTypes.JSON),
         allowNull: false,
+        defaultValue: [],
         validate: {
-          isValidJsonArray(steps) {
-            // Validate Array type
+          isArray(steps) {
             if (!Array.isArray(steps))
               throw new Error('Steps must be an array')
-
-            // Validate each step
-            for (const step of steps) {
-              // Validate JSON object
-              if (typeof step !== 'object' || Array.isArray(step))
-                throw new Error('Each step must be a JSON object.');
-
-              // Validate number and step attributes
-              const { number, step: stepDesc } = step;
-              if (!number)
-                throw new Error('Each step must have an id')
-              if (!stepDesc)
-                throw new Error('Each step description must not be null and void')
-            }
-          }
+          },
         }
       },
     });

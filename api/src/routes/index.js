@@ -1,21 +1,20 @@
 const { Router } = require('express');
 const recipeController = require('../controllers/recipe.controller')
 const dietController = require('../controllers/diet.controller')
-const apiController = require('../controllers/api.controller')
 
 const router = Router();
 
 // Configure recipe routes
-router.post('/recipes/', recipeController.createRecipe)
-router.get('/recipes/', recipeController.getRecipesByNameMatch)
-router.get('/recipes/:idRecipe', recipeController.getRecipeById)
-router.get('/api/recipe', apiController.getRecipes)
-router.get('/api/recipe/:id', apiController.getRecipeInformationById)
+router.post('/recipes/', recipeController.createRecipe) // Ok
+router.get('/recipes/', recipeController.getRecipeByName) // Ok, uses API and Database
+router.get('/recipes/:idRecipe', recipeController.getRecipeById) // Ok
+router.get('/api/recipes', recipeController.getRecipesFromAPI) // Ok
+router.get('/api/recipes/:id', recipeController.getRecipeByIdFromAPI) // Ok
 
 // Configure diet routes
-router.get('/diets/', dietController.getDiets)
-router.get('/api/diets/', dietController.getDietNamesFromAPI)
-router.get('/db/diets/', dietController.getDietsFromDB)
+router.get('/diets/', dietController.getOrCreateDiets) // Ok, getDietNamesFromAPI try catch
+router.get('/db/diets/', dietController.getDietsFromDB) // Ok
+router.get('/api/diets/', dietController.getDietNamesFromAPI) // Ok
 
 // Configure test routes
 router.get('/hello', (req, res) => {

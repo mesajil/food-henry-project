@@ -1,11 +1,11 @@
 const { Diet } = require('../db')
-const utils = require('../utils/diet.utils')
+const dietUtils = require('../utils/diet.utils')
 
 module.exports = {
     getDietNamesFromAPI: async (req, res) => {
         try {
             // Get diets from API
-            let diets = await utils.getDietNamesFromAPI()
+            let diets = await dietUtils.getDietNamesFromAPI()
 
             // Send diets
             res.status(200).json({
@@ -13,7 +13,7 @@ module.exports = {
             })
         } catch (error) {
             // Reply error
-            res.status(404).send({
+            res.status(500).send({
                 error: error.message
             })
         }
@@ -21,31 +21,56 @@ module.exports = {
     getDietsFromDB: async (req, res) => {
         try {
             // Get diets from database
-            let diets = await utils.getDietsFromDB()
+            let diets = await Diet.findAll()
 
             // Send diets
             res.status(200).json({
-                data: diets,
+                data: diets.map(({ id, name }) => ({ id, name })),
             })
         } catch (error) {
             // Reply error
-            res.status(404).send({
+            res.status(500).send({
                 error: error.message
             })
         }
     },
-    getDiets: async (req, res) => {
+    getOrCreateDiets: async (req, res) => {
         try {
-            // Get diets from database
-            const diets = await utils.getDiets()
+            try { // ****** * DATABASE * *************
+                // Get diets from database
+                const diets = await Diet.findAll()
 
-            // Send diets
-            res.status(200).json({
-                data: diets,
-            })
+                // Return error if diets not found
+                if (!diets.length)
+                    throw new Error("Diets not found in the database")
+
+                // Map and send diets
+                res.status(200).json({
+                    data: diets.map(diet =>
+                        dietUtils.mapDiet(diet)
+                    ),
+                    created: false,
+                })
+            } catch (error) { // ******** * API * ***************
+                // Get diets from API
+                const dietNames = await dietUtils.getDietNamesFromAPI()
+                // Save diets in the database
+                const diets = await Diet.bulkCreate(
+                    dietNames.map((name) => ({ name }))
+                )
+
+                // Map and send diets
+                res.status(200).json({
+                    data: diets.map(diet =>
+                        dietUtils.mapDiet(diet)
+                    ),
+                    created: true,
+                    databaseError: error.message
+                })
+            }
         } catch (error) {
             // Reply error
-            res.status(404).send({
+            res.status(500).send({
                 error: error.message
             })
         }
