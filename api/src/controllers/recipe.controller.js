@@ -181,4 +181,11 @@ module.exports = {
             })
         }
     },
+    getHealthScoreDataFromAPI: async (req, res) => {
+        try {
+            res.send('Hello')
+        } catch (error) {
+            
+        }
+    }
 }

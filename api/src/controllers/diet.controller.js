@@ -34,7 +34,7 @@ module.exports = {
             })
         }
     },
-    getOrCreateDiets: async (req, res) => {
+    findOrCreateDiets: async (req, res) => {
         try {
             try { // ****** * DATABASE * *************
                 // Get diets from database

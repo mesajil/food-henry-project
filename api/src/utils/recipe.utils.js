@@ -63,4 +63,11 @@ module.exports = {
             }
         }
     },
+    getHealthScoreDataFromAPI: async function () {
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
 }

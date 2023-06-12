@@ -9,10 +9,11 @@ router.post('/recipes/', recipeController.createRecipe) // Ok
 router.get('/recipes/', recipeController.getRecipeByName) // Ok, uses API and Database
 router.get('/recipes/:idRecipe', recipeController.getRecipeById) // Ok
 router.get('/api/recipes', recipeController.getRecipesFromAPI) // Ok
+// router.get('/api/recipes/hs', recipeController.getHealthScoreDataFromAPI) // Ok
 router.get('/api/recipes/:id', recipeController.getRecipeByIdFromAPI) // Ok
 
 // Configure diet routes
-router.get('/diets/', dietController.getOrCreateDiets) // Ok, getDietNamesFromAPI try catch
+router.get('/diets/', dietController.findOrCreateDiets) // Ok, getDietNamesFromAPI try catch
 router.get('/db/diets/', dietController.getDietsFromDB) // Ok
 router.get('/api/diets/', dietController.getDietNamesFromAPI) // Ok
 
