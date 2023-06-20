@@ -1,17 +1,34 @@
+import { connect } from "react-redux"
 import Card, { } from '../Card/Card'
 import style from './Cards.module.css'
+import { useState } from "react"
 
 
+const Cards = ({ recipes, page }) => {
 
-export default function (props) {
     return <div className={style.container}>
-        {props.recipes.map((recipe) => (
-            <Card
-                key={recipe.id}
-                name={recipe.name}
-                image={recipe.image}
-                diets={recipe.diets.toString()}
-            />
-        ))}
+        {recipes.length
+            ? recipes
+                .filter((_, index) => Math.floor(index/9) + 1 === page)
+                .map((recipe) => {
+                    const { id, name, image, diets } = recipe;
+                    return <Card
+                        key={id}
+                        id={id}
+                        name={name}
+                        image={image}
+                        diets={diets}
+                    />
+                })
+            : <p>Loading recipes ...</p>
+        }
     </div>
 }
+
+
+const mapStateToProps = (state) => ({
+    recipes: state.filter,
+})
+
+// Connect and export component
+export default connect(mapStateToProps, null)(Cards);

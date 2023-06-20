@@ -38,11 +38,9 @@ module.exports = {
         try {
             // Get recipe by id
             const { data: recipe } = await axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=${API_KEY}`)
-            
+
             // Map and return recipe 
-            return {
-                data: this.mapRecipe(recipe)
-            }
+            return { recipe: this.mapRecipe(recipe) }
         } catch (error) {
             return {
                 error: error.message
@@ -65,9 +63,9 @@ module.exports = {
     },
     getHealthScoreDataFromAPI: async function () {
         try {
-            
+
         } catch (error) {
-            
+
         }
     }
 }

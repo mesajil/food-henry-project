@@ -1,39 +1,35 @@
 import { connect } from "react-redux"
-import { addRecipes } from "../../redux/actions"
 import { useEffect, useState } from "react";
-import axios from "axios"
 import Cards, { } from "../../components/Cards/Cards";
-import NavBar, {} from "../../components/NavBar/NavBar"
-import db from '../../db'
+import NavBar, { } from "../../layouts/NavBar/NavBar"
+import SideBar, { } from "../../layouts/SideBar/SideBar"
+import PageBar, { } from '../../layouts/PageBar/PageBar'
+import { getRecipes } from "../../redux/actions"
 
-const Home = (props) => {
-    const [recipes, setRecipes] = useState([]);
+const Home = ({ getRecipes, recipes, filter }) => {
 
-    useEffect(() => {
-        // REDUX
-        // axios("localhost:3001/recipes/?name=red")
-        //     .then(({ data: recipes }) => props.addRecipes(recipes))
-        //     .catch(({ data: error }) => { console.log(error); })
+    const [page, setPage] = useState(1)
 
-        // Local state
-        // axios("http://localhost:3001/recipes/?name=red")
-        //     .then(({ data: { data: recipes } }) => setRecipes(recipes))
-        //     .catch(error => { console.log('Error fetching recipes:', error.message); })
-        setRecipes(db.recipes)
+    useEffect(() => { if (!recipes.length) getRecipes() }, [])
+    useEffect(() => setPage(() => 1), [filter])
 
-    }, [])
     return <div>
         <NavBar></NavBar>
-        <Cards recipes={recipes}></Cards>
+        <SideBar></SideBar>
+        <PageBar onPageSelection={setPage} page={page}></PageBar>
+        <Cards page={page}></Cards>
+        <PageBar onPageSelection={setPage} page={page}></PageBar>
     </div>
 }
 
 // Redux configuration
 const mapStateToProps = (state) => ({
-    recipes: state.recipes,
+    filter: state.filter,
+    recipes: state.filter,
 })
+
 const mapDispatchToProps = (dispatch) => ({
-    addRecipes: (recipe) => dispatch(addRecipes(recipe)),
+    getRecipes: (name) => dispatch(getRecipes(name)),
 })
 
 // Connect and export component

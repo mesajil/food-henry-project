@@ -1,16 +1,30 @@
 .container {
+    /* Color */
     background: rgb(236, 236, 236);
     box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
 
+    /* Size */
     aspect-ratio: 1 / 1;
-    /* width: 32%; */
     width: calc(33.33% - 10px);
     margin-bottom: 20px;
 
-
+    /* Flex content */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
 
+/* Media query for smaller screens */
+@media screen and (max-width: 768px) {
+    .container {
+        width: calc(50% - 10px);
+    }
+}
+
+/* Media query for even smaller screens */
+@media screen and (max-width: 480px) {
+    .container {
+        width: 100%;
+    }
 }

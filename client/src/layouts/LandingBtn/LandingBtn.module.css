@@ -1,0 +1,16 @@
+.circularButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    border: none;
+    cursor: pointer;
+}
+
+.buttonText {
+    font-size: 20px;
+    font-weight: bold;
+}

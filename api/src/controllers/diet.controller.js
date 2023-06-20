@@ -46,10 +46,9 @@ module.exports = {
 
                 // Map and send diets
                 res.status(200).json({
-                    data: diets.map(diet =>
-                        dietUtils.mapDiet(diet)
-                    ),
+                    diets: diets.map(diet => dietUtils.mapDiet(diet)),
                     created: false,
+                    error: ""
                 })
             } catch (error) { // ******** * API * ***************
                 // Get diets from API
@@ -61,11 +60,9 @@ module.exports = {
 
                 // Map and send diets
                 res.status(200).json({
-                    data: diets.map(diet =>
-                        dietUtils.mapDiet(diet)
-                    ),
+                    diets: diets.map(diet => dietUtils.mapDiet(diet)),
                     created: true,
-                    databaseError: error.message
+                    error: error.message
                 })
             }
         } catch (error) {

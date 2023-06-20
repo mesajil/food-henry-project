@@ -1,5 +1,6 @@
 require('dotenv').config();
 const recipeUtils = require('../utils/recipe.utils')
+const db = require('../utils/db')
 const { Recipe } = require("../db");
 
 
@@ -115,13 +116,12 @@ module.exports = {
                 if (!recipe) throw new Error("Recipe not found")
 
                 // Send recipe
-                return res.status(200).json({
-                    data: recipe
-                })
+                return res.status(200).json({ recipe })
+
             } catch (error) { // ****** * API * *********
                 // Try to get recipe from API
                 const {
-                    data: recipe,
+                    recipe,
                     error: APIerror
                 } = await recipeUtils.getRecipeByIdFromAPI(id)
 
@@ -136,7 +136,7 @@ module.exports = {
 
                 // Send the recipe
                 return res.status(200).json({
-                    data: recipe
+                    recipe
                 })
             }
 
@@ -150,33 +150,26 @@ module.exports = {
     getRecipeByName: async (req, res) => {
         try {
             // Get recipes
-            const recipes = await recipeUtils.getRecipes()
-
-            // Get query name
-            const { name } = req.query;
-
-            // Send recipes
-            if (!name)
-                return res.status(200).send({
-                    data: recipes
-                })
+            let recipes = await recipeUtils.getRecipes()
+            // let recipes = db.recipes;
 
             // Filter the recipes by name
-            const data = recipes.filter((recipe) => {
-                return recipe.name.toLowerCase().includes(
-                    name.toLowerCase()
-                )
-            })
+            const { name } = req.query;
+            if (name) {
+                recipes = recipes.filter((recipe) => {
+                    const recipeTitle = recipe.name.toLowerCase()
+                    return recipeTitle.includes(name.toLowerCase())
+                })
+            }
 
             // Send filter recipes
-            res.status(200).send({
-                data,
-                message: !data.length ? "No recipes found" : ""
+            res.status(200).json({
+                recipes
             })
 
         } catch (error) {
             // Reply error
-            res.status(500).send({
+            res.status(500).json({
                 error: error.message
             })
         }
@@ -185,7 +178,7 @@ module.exports = {
         try {
             res.send('Hello')
         } catch (error) {
-            
+
         }
     }
 }
