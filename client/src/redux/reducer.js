@@ -3,7 +3,7 @@ import { actionTypes } from './actions'
 const initialState = {
     recipes: [],
     filter: [],
-    presentation: {},
+    diets: [],
 }
 
 
@@ -14,6 +14,10 @@ export default function (state = initialState, action) {
             return { ...state, recipes: action.payload, filter: action.payload }
         case actionTypes.FILTER:
             return filterByFilterOBject(state, action.payload)
+        case actionTypes.GET_DIETS:
+            return { ...state, diets: action.payload }
+        case actionTypes.CREATE_RECIPE:
+            return { ...state, recipes: state.recipes.concat(action.payload) }
         default:
             return { ...state };
     }

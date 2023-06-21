@@ -1,10 +1,9 @@
 import { connect } from "react-redux"
-import { diets } from '../../utils/db'
 import style from './SideBar.module.css'
 import { filterByFilterObject } from "../../redux/actions"
 import { useEffect, useState } from "react"
 
-const SideBar = ({ filterByFilterObject }) => {
+const SideBar = ({ diets, filterByFilterObject }) => {
     const [filterObject, setFilterObject] = useState({
         type: 'all',
         dataSource: 'all',
@@ -63,8 +62,12 @@ const SideBar = ({ filterByFilterObject }) => {
     </div>
 }
 
+const mapStateToProps = (state) => ({
+    diets: state.diets,
+})
+
 const mapDispatchToProps = (dispatch) => ({
     filterByFilterObject: (diet) => dispatch(filterByFilterObject(diet)),
 })
 
-export default connect(null, mapDispatchToProps)(SideBar);
+export default connect(mapStateToProps, mapDispatchToProps)(SideBar);

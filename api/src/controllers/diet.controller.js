@@ -1,5 +1,6 @@
 const { Diet } = require('../db')
 const dietUtils = require('../utils/diet.utils')
+const db = require('../utils/db') // In case the spoonacular API is down
 
 module.exports = {
     getDietNamesFromAPI: async (req, res) => {
@@ -28,7 +29,6 @@ module.exports = {
                 data: diets.map(({ id, name }) => ({ id, name })),
             })
         } catch (error) {
-            // Reply error
             res.status(500).send({
                 error: error.message
             })
@@ -40,36 +40,37 @@ module.exports = {
                 // Get diets from database
                 const diets = await Diet.findAll()
 
-                // Return error if diets not found
+                // Handle missing diets in the database
                 if (!diets.length)
-                    throw new Error("Diets not found in the database")
+                    throw new Error()
 
                 // Map and send diets
                 res.status(200).json({
-                    diets: diets.map(diet => dietUtils.mapDiet(diet)),
+                    data: diets.map(diet => dietUtils.mapDiet(diet)),
                     created: false,
-                    error: ""
                 })
             } catch (error) { // ******** * API * ***************
-                // Get diets from API
-                const dietNames = await dietUtils.getDietNamesFromAPI()
-                // Save diets in the database
-                const diets = await Diet.bulkCreate(
-                    dietNames.map((name) => ({ name }))
-                )
 
+                // Get diet names from API
+                let { data: names, message } = await dietUtils.getDietNamesFromAPI()
+                if (!names)
+                    names = db.diets.map(({name}) => name)// In case the spoonacular API is down
+        
+                if (!names) throw Error(message)
+
+                // Create diets in the database
+                const diets = await Diet.bulkCreate(
+                    names.map((name) => ({ name }))
+                )
                 // Map and send diets
                 res.status(200).json({
-                    diets: diets.map(diet => dietUtils.mapDiet(diet)),
+                    data: diets.map(diet => dietUtils.mapDiet(diet)),
                     created: true,
-                    error: error.message
                 })
             }
         } catch (error) {
             // Reply error
-            res.status(500).send({
-                error: error.message
-            })
+            res.status(500).send({ error: error.message })
         }
     },
 }

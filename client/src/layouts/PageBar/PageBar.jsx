@@ -1,8 +1,9 @@
 import { connect } from "react-redux"
 import style from './PageBar.module.css'
 
-const PageBar = ({ onPageSelection, recipesLength, page }) => {
-    const numberOfPages = Math.floor(recipesLength / 9 + 1)
+const PageBar = ({ onPageSelection, recipes, page }) => {
+    
+    const numberOfPages = Math.floor(recipes.length / 9 + 1)
     const pageSelectionHandler = (buttonText) => { onPageSelection(() => Number(buttonText)) }
     const prevPageHandler = () => { onPageSelection(() => page > 1 ? page - 1 : page) }
     const nextPageHandler = () => { onPageSelection(() => page < numberOfPages ? page + 1 : page) }
@@ -20,7 +21,7 @@ const PageBar = ({ onPageSelection, recipesLength, page }) => {
 
 
 const mapStateToProps = (state) => ({
-    recipesLength: state.filter.length,
+    recipes: state.filter,
 })
 
 // Connect and export component

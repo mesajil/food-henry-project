@@ -1,7 +1,9 @@
 require('dotenv').config();
 const recipeUtils = require('../utils/recipe.utils')
-const db = require('../utils/db')
+const { filterRecipesByName } = require('../utils/utils')
 const { Recipe } = require("../db");
+const { ERR_GET_RECIPES_BY_NAME, ERR_RECIPE_ID_MISSING, ERR_MISSING_DIETS } = require('../utils/error');
+const db = require('../utils/db') // In case the spoonacular API is down
 
 
 module.exports = {
@@ -53,11 +55,9 @@ module.exports = {
             // Validate diets
             const { diets } = req.body;
             if (!diets || !diets.length)
-                return res.status(404).send({
-                    error: "Diets are missing"
-                })
+                return res.status(404).send({ message: ERR_MISSING_DIETS() })
 
-            // Save recipe object
+            // Create recipe object
             const [recipe, created] = await Recipe.findOrCreate({
                 where: {
                     name: req.body.name,
@@ -65,120 +65,74 @@ module.exports = {
                     summary: req.body.summary,
                     healthScore: req.body.healthScore,
                 },
-                defaults: {
-                    steps: req.body.steps
-                }
+                defaults: { steps: req.body.steps }
             })
 
             // Add associated diets
             try {
                 await recipe.addDiets(diets)
-                // Send recipe
-                res.status(200).json({
-                    data: recipe,
-                    created,
-                })
+                // Success: send recipe
+                res.status(200).json({ data: recipe, created })
+
             } catch (error) {
-                // Destroy recipe
+                // Fail associating diets: Destroy recipe
                 await Recipe.destroy({
-                    where: {
-                        id: recipe.id
-                    }
+                    where: { id: recipe.id }
                 })
                 // Send error
-                res.status(404).send({
-                    error: error.message
-                })
+                res.status(404).send({ message: error.message })
             }
 
         } catch (error) {
             // Reply error
-            res.status(500).send({
-                error: error.message
-            })
+            res.status(500).send({ message: error.message })
         }
     },
     getRecipeById: async (req, res) => {
         try {
             // Validate recipe id
             const { idRecipe: id } = req.params;
-            if (!id)
-                return res.status(404).send({
-                    error: "Recipe id is missing"
-                })
+            if (!id) return res.status(404).send({ message: ERR_RECIPE_ID_MISSING() })
 
             try { // ****** * DATABASE * *********
 
-                // Try to get recipe from database
-                const recipe = await Recipe.findByPk(id)
+                // Get recipe from database
+                const recipe = await recipeUtils.getRecipeByIdFromDB(id)
 
-                // If recipe is missing, try to get from the API
-                if (!recipe) throw new Error("Recipe not found")
+                // Valid uuid, but recipe not found
+                if (!recipe) throw new Error()
 
                 // Send recipe
-                return res.status(200).json({ recipe })
+                return res.status(200).json({ data: recipe })
 
             } catch (error) { // ****** * API * *********
-                // Try to get recipe from API
-                const {
-                    recipe,
-                    error: APIerror
-                } = await recipeUtils.getRecipeByIdFromAPI(id)
+                // Get recipe from API
+                const { data, message } = await recipeUtils.getRecipeByIdFromAPI(id)
 
-                // If recipe is missing, send an error
-                if (!recipe)
-                    return res.status(404).send({
-                        error: {
-                            databaseError: error.message,
-                            APIerror
-                        }
-                    })
+                // Handle missing recipes
+                if (!data) return res.status(404).send({ message })
 
                 // Send the recipe
-                return res.status(200).json({
-                    recipe
-                })
+                return res.status(200).json({ data })
             }
 
         } catch (error) {
-            // Reply error
-            res.status(500).send({
-                error: error.message
-            })
+            res.status(500).send({ message: error.message })
         }
     },
     getRecipeByName: async (req, res) => {
         try {
             // Get recipes
-            let recipes = await recipeUtils.getRecipes()
-            // let recipes = db.recipes;
+            let { data: recipes } = await recipeUtils.getRecipes()
 
-            // Filter the recipes by name
+            if (!recipes) throw Error("No recipes found")
+
+            // Send filter
             const { name } = req.query;
-            if (name) {
-                recipes = recipes.filter((recipe) => {
-                    const recipeTitle = recipe.name.toLowerCase()
-                    return recipeTitle.includes(name.toLowerCase())
-                })
-            }
-
-            // Send filter recipes
-            res.status(200).json({
-                recipes
-            })
+            res.status(200).json({ data: filterRecipesByName(recipes, name) })
 
         } catch (error) {
-            // Reply error
-            res.status(500).json({
-                error: error.message
-            })
+            res.status(500).json({ message: ERR_GET_RECIPES_BY_NAME(error.message) })
         }
     },
-    getHealthScoreDataFromAPI: async (req, res) => {
-        try {
-            res.send('Hello')
-        } catch (error) {
-
-        }
-    }
 }

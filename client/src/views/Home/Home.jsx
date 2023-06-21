@@ -4,13 +4,16 @@ import Cards, { } from "../../components/Cards/Cards";
 import NavBar, { } from "../../layouts/NavBar/NavBar"
 import SideBar, { } from "../../layouts/SideBar/SideBar"
 import PageBar, { } from '../../layouts/PageBar/PageBar'
-import { getRecipes } from "../../redux/actions"
+import { getRecipes, getDiets } from "../../redux/actions"
 
-const Home = ({ getRecipes, recipes, filter }) => {
+const Home = ({ getRecipes, getDiets, filter }) => {
 
     const [page, setPage] = useState(1)
 
-    useEffect(() => { if (!recipes.length) getRecipes() }, [])
+    useEffect(() => {
+        getRecipes()
+        getDiets()
+    }, [])
     useEffect(() => setPage(() => 1), [filter])
 
     return <div>
@@ -25,11 +28,12 @@ const Home = ({ getRecipes, recipes, filter }) => {
 // Redux configuration
 const mapStateToProps = (state) => ({
     filter: state.filter,
-    recipes: state.filter,
+    // recipes: state.recipes,
 })
 
 const mapDispatchToProps = (dispatch) => ({
     getRecipes: (name) => dispatch(getRecipes(name)),
+    getDiets: () => dispatch(getDiets()),
 })
 
 // Connect and export component

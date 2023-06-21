@@ -7,7 +7,6 @@ const SearchBar = ({ getRecipes }) => {
 
     const handleKeyPress = (event) => {
         const { key, target: { value } } = event
-        // console.log({key, value});
         if (key === 'Enter')
             getRecipes(value)
     };

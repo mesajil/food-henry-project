@@ -4,12 +4,19 @@ const dietController = require('../controllers/diet.controller')
 
 const router = Router();
 
+// CORS policy
+router.options("/recipes/", (req, res) => {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.sendStatus(200);
+});
+
 // Configure recipe routes
-router.post('/recipes/', recipeController.createRecipe) // Ok
 router.get('/recipes/', recipeController.getRecipeByName) // Ok, uses API and Database
 router.get('/recipes/:idRecipe', recipeController.getRecipeById) // Ok
+router.post('/recipes/', recipeController.createRecipe) // Ok
 router.get('/api/recipes', recipeController.getRecipesFromAPI) // Ok
-// router.get('/api/recipes/hs', recipeController.getHealthScoreDataFromAPI) // Ok
 router.get('/api/recipes/:id', recipeController.getRecipeByIdFromAPI) // Ok
 
 // Configure diet routes

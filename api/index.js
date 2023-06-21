@@ -23,7 +23,7 @@ const PORT = 3001;
 
 // Syncing all the models at once.
 conn.sync(
-  { force: true }
+  { force: false }
 )
   .then(() => {
     server.listen(PORT, () => {

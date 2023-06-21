@@ -1,3 +1,25 @@
 .container {
-    
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.inputContainer {
+    margin-bottom: 10px;
+}
+
+
+.listItems {
+    list-style: none;
+    background-color: greenyellow;
+    border-radius: 8px;
+}
+
+.item {
+    display: flex;
+}
+
+.checkbox {
+    margin-right: 5px;
 }
