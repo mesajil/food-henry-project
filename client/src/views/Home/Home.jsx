@@ -1,4 +1,4 @@
-import { connect } from "react-redux"
+import { connect, useSelector } from "react-redux"
 import { useEffect, useState } from "react";
 import Cards, { } from "../../components/Cards/Cards";
 import NavBar, { } from "../../layouts/NavBar/NavBar"
@@ -7,7 +7,7 @@ import PageBar, { } from '../../layouts/PageBar/PageBar'
 import { getRecipes, getDiets } from "../../redux/actions"
 
 const Home = ({ getRecipes, getDiets, filter }) => {
-
+    
     const [page, setPage] = useState(1)
 
     useEffect(() => {
@@ -15,7 +15,7 @@ const Home = ({ getRecipes, getDiets, filter }) => {
         getDiets()
     }, [])
     useEffect(() => setPage(() => 1), [filter])
-
+    
     return <div>
         <NavBar></NavBar>
         <SideBar></SideBar>

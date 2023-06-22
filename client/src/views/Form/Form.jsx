@@ -10,8 +10,8 @@ const Form = ({ diets, createRecipe, getDiets }) => {
         image: "",
         summary: "",
         healthScore: "50",
-        steps: [],
         diets: [],
+        steps: ["Hello"],
     })
 
     useEffect(() => { getDiets(); }, [])

@@ -23,7 +23,7 @@ export const getRecipes = (name) => {
             })
         } catch (error) { // Handle error
             dispatch({
-                type: actionTypes.GET_RECIPES,
+                type: actionTypes.GET_RECIPES, // Save error en Redux
                 payload: [],
             })
         }

@@ -1,6 +1,12 @@
 const { Router } = require('express');
-const recipeController = require('../controllers/recipe.controller')
-const dietController = require('../controllers/diet.controller')
+const getRecipeByName = require('../controllers/recipe/getRecipeByName.controller')
+const getRecipeById = require('../controllers/recipe/getRecipeById.controller')
+const createRecipe = require('../controllers/recipe/createRecipe.controller')
+const getRecipesFromAPI = require('../controllers/recipe/getRecipesFromAPI.controller')
+const getRecipeByIdFromAPI = require('../controllers/recipe/getRecipeByIdFromAPI.controller')
+const findOrCreateDiets = require('../controllers/diet/findOrCreateDiets.controller')
+const getDietNamesFromAPI = require('../controllers/diet/getDietNamesFromAPI.controller')
+const getDietsFromDB = require('../controllers/diet/getDietsFromDB.controller')
 
 const router = Router();
 
@@ -12,26 +18,37 @@ router.options("/recipes/", (req, res) => {
     res.sendStatus(200);
 });
 
-// Configure recipe routes
-router.get('/recipes/', recipeController.getRecipeByName) // Ok, uses API and Database
-router.get('/recipes/:idRecipe', recipeController.getRecipeById) // Ok
-router.post('/recipes/', recipeController.createRecipe) // Ok
-router.get('/api/recipes', recipeController.getRecipesFromAPI) // Ok
-router.get('/api/recipes/:id', recipeController.getRecipeByIdFromAPI) // Ok
+// Recipe routes (From API and Database)
+router.get('/recipes/', getRecipeByName)  // Ok
+router.get('/recipes/:idRecipe', getRecipeById) // Ok
+router.post('/recipes/', createRecipe) // Ok
 
-// Configure diet routes
-router.get('/diets/', dietController.findOrCreateDiets) // Ok, getDietNamesFromAPI try catch
-router.get('/db/diets/', dietController.getDietsFromDB) // Ok
-router.get('/api/diets/', dietController.getDietNamesFromAPI) // Ok
+// Recipe routes (From API)
+router.get('/api/recipes', getRecipesFromAPI) // Ok
+router.get('/api/recipes/:id', getRecipeByIdFromAPI) // Ok
 
-// Configure test routes
+// Diet routes (From API)
+router.get('/diets/', findOrCreateDiets) // Ok
+router.get('/api/diets/', getDietNamesFromAPI) // Ok
+
+// Diet routes (From Database)
+router.get('/db/diets/', getDietsFromDB) // Ok
+
+
+
+// Test route
 router.get('/hello', (req, res) => {
-    res.status(200).send('Hello World!')
+    res
+        .status(200)
+        .send('Hello World!')
 })
 
-// Handle requests to unknown routes
+// Handle Unknown routes
 router.all('*', (req, res) => {
-    res.status(404).send(`Unknown route: ${req.method} ${req.originalUrl}`);
+    const message = `Unknown route: ${req.method} ${req.originalUrl}`
+    res
+        .status(404)
+        .send({ message });
 });
 
 module.exports = router;

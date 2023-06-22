@@ -11,7 +11,9 @@ export default function () {
     useEffect(() => {
         const url = `http://localhost:3001/recipes/${id}`
         axios.get(url)
-            .then(({ data: { data : recipe } }) => { setRecipe(() => recipe) })
+            .then(({ data: { data : recipe } }) => { setRecipe(() => recipe);
+            console.log(recipe);
+            })
             .catch((error) => { console.log(error.message); })
     }, [])
 
@@ -25,8 +27,9 @@ export default function () {
                 <img src={recipe.image} alt={recipe.name} />
                 <h4>id: {recipe.id}</h4>
                 <p>Diets: {recipe.diets ? recipe.diets.join(', ') : ""}</p>
-                <p>Summary: {recipe.summary}</p>
+                <p>{recipe.summary}</p>
                 <p>Health score: {recipe.healthScore}</p>
+                {/* <p>Steps: {recipe.steps.join(', ')}</p> */}
             </div>
             : <p>Loading recipe ...</p>}
     </div>
