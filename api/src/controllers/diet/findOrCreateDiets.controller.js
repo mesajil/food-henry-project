@@ -43,7 +43,7 @@ const findOrCreateDiets = async (req, res) => {
         const message = `Error finding or creating diets in the database: ${error.message}`
         res
             .status(500)
-            .send({ message })
+            .json({ message })
     }
 }
 

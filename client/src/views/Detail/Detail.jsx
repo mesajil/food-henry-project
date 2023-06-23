@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { Link, useParams } from "react-router-dom";
 import axios from "axios"
 import style from './Detail.module.css'
-import { Link, useParams } from "react-router-dom";
+import Instructions from '../../components/Instructions/Instructions';
 
 
 export default function () {
@@ -29,7 +30,7 @@ export default function () {
                 <p>Diets: {recipe.diets ? recipe.diets.join(', ') : ""}</p>
                 <p>{recipe.summary}</p>
                 <p>Health score: {recipe.healthScore}</p>
-                {/* <p>Steps: {recipe.steps.join(', ')}</p> */}
+                <Instructions instructions={recipe.steps}></Instructions>
             </div>
             : <p>Loading recipe ...</p>}
     </div>
