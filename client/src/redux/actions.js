@@ -55,16 +55,15 @@ export const createRecipe = (recipe) => {
     return async function (dispatch) {
         try {
             const url = `http://localhost:3001/recipes/`;
-            console.log(recipe);
             const { data: { data, message } } = await axios.post(url, recipe)
-            if (!data) throw Error(message)
-            console.log("Recipe created!");
+            if (!data) console.log({ message })
             dispatch({
                 type: actionTypes.CREATE_RECIPE,
                 payload: { ...data, created: true },
             })
         } catch (error) {
-            console.log(error.message);
+            const message = `Error while creating recipe: ${error.message}`
+            console.log({ message });
         }
     }
 }

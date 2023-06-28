@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import style from './Form.module.css'
 import { createRecipe, getDiets } from '../../redux/actions'
+import InstructionInput from '../../components/Form/InstructionInput/InstructionInput'
+import createInstruction from '../../utils/Form/utils/createInstruction'
+import useFormErrors from "../../hooks/useFormErrors";
+import { validators } from "../../utils/Form/validations/validations";
 
 const Form = ({ diets, createRecipe, getDiets }) => {
     const [formData, setFormData] = useState({
@@ -11,14 +15,17 @@ const Form = ({ diets, createRecipe, getDiets }) => {
         summary: "",
         healthScore: "50",
         diets: [],
-        steps: ["Hello"],
+        steps: [],
     })
+    const { setError, clearError, getError, hasErrors } = useFormErrors()
 
     useEffect(() => { getDiets(); }, [])
 
-    const handleChangeFormData = (event) => {
+    const handleReplaceFormData = (event) => {
         const { name, value } = event.target;
         setFormData((formData) => ({ ...formData, [name]: value, }))
+        const { data: isValid, message: errorMessage } = validators[name](formData[name])
+        !isValid ? setError(name, errorMessage) : clearError(name)
     }
 
     const handleChangeDietsSelection = (event) => {
@@ -31,11 +38,20 @@ const Form = ({ diets, createRecipe, getDiets }) => {
         else {
             setFormData((formData) => ({ ...formData, diets: diets.filter((diet) => diet != value) }))
         }
+        const name = 'diets'
+        const { data: isValid, message: errorMessage } = validators[name](formData[name])
+        !isValid ? setError(name, errorMessage) : clearError(name)
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
         createRecipe(formData)
+    }
+    const handleCreateInstruction = () => {
+        createInstruction(formData, setFormData)
+        const name = 'steps'
+        const { data: isValid, message: errorMessage } = validators[name](formData[name])
+        !isValid ? setError(name, errorMessage) : clearError(name)
     }
 
     return <div className={style.container}>
@@ -46,22 +62,25 @@ const Form = ({ diets, createRecipe, getDiets }) => {
         <form onSubmit={handleSubmit}>
             <div className={style.inputContainer}>
                 <label htmlFor="">Name: </label>
-                <input type="text" name='name' value={formData.name} onChange={handleChangeFormData} />
+                <input type="text" name='name' value={formData.name} onChange={handleReplaceFormData} />
+                <p>{getError('name')}</p>
             </div>
             <div className={style.inputContainer}>
                 <label htmlFor="">Summary: </label>
-                <input type="text" name='summary' value={formData.summary} onChange={handleChangeFormData} />
+                <input type="text" name='summary' value={formData.summary} onChange={handleReplaceFormData} />
+                <p>{getError('summary')}</p>
             </div>
             <div className={style.inputContainer}>
                 <label htmlFor="">Image: </label>
-                <select name="image" id="" onChange={handleChangeFormData} >
+                <select name="image" id="" onChange={handleReplaceFormData} >
                     <option value="">null</option>
                     <option value="https://spoonacular.com/recipeImages/782601-312x231.jpg">https://spoonacular.com/recipeImages/782601-312x231.jpg</option>
                 </select>
+                <p>{getError('image')}</p>
             </div>
             <div className={style.inputContainer}>
                 <label htmlFor="">Health score: </label>
-                <input type="range" name='healthScore' onChange={handleChangeFormData} min="0" max="100" value={formData.healthScore} />
+                <input type="range" name='healthScore' onChange={handleReplaceFormData} min="0" max="100" value={formData.healthScore} />
             </div>
             <div className={style.inputContainer}>
                 <label htmlFor="">Select diets: </label>
@@ -74,8 +93,26 @@ const Form = ({ diets, createRecipe, getDiets }) => {
                         </div>
                     )}
                 </ul>
+                <p>{getError('diets')}</p>
             </div>
-            <button type="submit">Create recipe</button>
+            <button type="button"
+                onClick={handleCreateInstruction}>
+                Create instruction
+            </button>
+            <div>
+                {formData.steps.map((step, index) =>
+                    <InstructionInput
+                        key={index} index={index}
+                        formData={formData}
+                        setFormData={setFormData}
+                    />
+                )}
+                <p>{getError('steps')}</p>
+            </div>
+            <button type="submit"
+                disabled={hasErrors()}>
+                Create recipe
+            </button>
         </form>
     </div>
 }

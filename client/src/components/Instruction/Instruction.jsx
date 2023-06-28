@@ -1,14 +1,16 @@
 import Steps from '../Steps/Steps'
+import { isEmptyArray } from '../../utils/utils'
 
 
 const Instruction = ({ index, instruction }) => {
     return (
         <div>{
-            instruction
-            &&
+            instruction &&
             <div>
-                <p>Name: {instruction.name ? instruction.name : `Instruction ${index}`}</p>
-                {instruction.steps && <Steps steps={instruction.steps} />}
+                <p>{`Instruction ${index + 1}`}: {instruction?.name}
+                </p>
+                {!isEmptyArray(instruction.steps) &&
+                    <Steps steps={instruction.steps} />}
             </div>
         }
         </div>

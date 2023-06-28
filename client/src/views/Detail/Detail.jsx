@@ -1,21 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from "react-router-dom";
-import axios from "axios"
 import style from './Detail.module.css'
 import Instructions from '../../components/Instructions/Instructions';
-
+import getRecipeById from '../../services/getRecipeById';
 
 export default function () {
     const { id } = useParams()
     const [recipe, setRecipe] = useState({})
 
     useEffect(() => {
-        const url = `http://localhost:3001/recipes/${id}`
-        axios.get(url)
-            .then(({ data: { data : recipe } }) => { setRecipe(() => recipe);
-            console.log(recipe);
-            })
-            .catch((error) => { console.log(error.message); })
+        const fetchRecipe = async (id) => {
+            const { data: recipe, message } = await getRecipeById(id)
+            if (!recipe) { console.log(message) }
+            else { setRecipe(recipe) }
+        }
+        fetchRecipe(id)
     }, [])
 
     return <div className={style.container}>

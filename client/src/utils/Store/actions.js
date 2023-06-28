@@ -1,5 +1,5 @@
 import * as db from './db'
-import { actionTypes } from '../redux/actions'
+import { actionTypes } from '../../redux/actions'
 
 
 
