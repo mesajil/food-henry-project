@@ -9,12 +9,14 @@ const useFormErrors = () => {
         const updateErrors = {...errors};
         updateErrors[fieldName] = errorMessage;
         setErrors(updateErrors)
+        return updateErrors; // Trick 
     }
     
     const clearError = (fieldName) => {
         const updateErrors = {...errors};
         delete updateErrors[fieldName];
         setErrors(updateErrors)
+        return updateErrors; // Trick 
     }
 
     const getError = (fieldName) => errors[fieldName];

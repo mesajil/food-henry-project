@@ -7,6 +7,7 @@ const SideBar = ({ diets, filterByFilterObject }) => {
     const [filterObject, setFilterObject] = useState({
         type: 'all',
         dataSource: 'all',
+        filterByHealthScore: { min: 0, max: 100 },
         sorting: { name: 'sortByName', value: 'default' }
     })
 
@@ -42,6 +43,15 @@ const SideBar = ({ diets, filterByFilterObject }) => {
                 <option value="api">API</option>
                 <option value="database">Database</option>
             </select>
+        </div>
+        <div className={style.filter}>
+            <h4>Filter by health score: </h4>
+            <div class="min-max-slider">
+                <label for="min">Minimum price</label>
+                <input id="min" class="min" name="min" type="range" step="1" min="0" max="3000" />
+                <label for="max">Maximum price</label>
+                <input id="max" class="max" name="max" type="range" step="1" min="0" max="3000" />
+            </div>
         </div>
         <div className={style.filter}>
             <h4>Sort by name: </h4>

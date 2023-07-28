@@ -18,14 +18,20 @@ const Form = ({ diets, createRecipe, getDiets }) => {
         steps: [],
     })
     const { setError, clearError, getError, hasErrors } = useFormErrors()
-
+    let errorsCopy = {};
     useEffect(() => { getDiets(); }, [])
 
     const handleReplaceFormData = (event) => {
         const { name, value } = event.target;
         setFormData((formData) => ({ ...formData, [name]: value, }))
         const { data: isValid, message: errorMessage } = validators[name](formData[name])
-        !isValid ? setError(name, errorMessage) : clearError(name)
+        // !isValid ? setError(name, errorMessage) : clearError(name)
+        if (!isValid) {
+            errorsCopy = setError(name, errorMessage)
+        }
+        else {
+            errorsCopy = clearError(name)
+        }
     }
 
     const handleChangeDietsSelection = (event) => {
@@ -63,7 +69,7 @@ const Form = ({ diets, createRecipe, getDiets }) => {
             <div className={style.inputContainer}>
                 <label htmlFor="">Name: </label>
                 <input type="text" name='name' value={formData.name} onChange={handleReplaceFormData} />
-                <p>{getError('name')}</p>
+                <p>{getError('name') ? getError('name') : ""}</p>
             </div>
             <div className={style.inputContainer}>
                 <label htmlFor="">Summary: </label>
@@ -110,7 +116,7 @@ const Form = ({ diets, createRecipe, getDiets }) => {
                 <p>{getError('steps')}</p>
             </div>
             <button type="submit"
-                disabled={hasErrors()}>
+                disabled={!hasErrors()}>
                 Create recipe
             </button>
         </form>
